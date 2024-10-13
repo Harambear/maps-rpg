@@ -1,0 +1,35 @@
+@import url('../../styles/animations.scss');
+
+.character {
+  position: relative;
+  overflow: hidden;
+
+  height: 64px;
+  width: 64px;
+
+  border: 1px solid white;
+  border-radius: 50%;
+
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .character__sprite {
+    position: absolute;
+    left: 6px;
+    bottom: 16px;
+
+    &--2-panel {
+      width: 120px;
+      animation: animate-sprite-sheet 1s steps(2) infinite;
+    }
+
+    &--4-panel {
+      width: 240px;
+      animation: animate-sprite-sheet 1s steps(4) infinite;
+    }
+
+    &--6-panel {
+      width: 360px;
+      animation: animate-sprite-sheet 0.5s steps(6) infinite;
+    }
+  }
+}
