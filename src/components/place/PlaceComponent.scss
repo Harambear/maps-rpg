@@ -1,7 +1,27 @@
 .place {
+  position: relative;
 
   &__image {
     height: auto;
     width: 100%;
+  }
+
+  &__option {
+    cursor: pointer;
+
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    background-color: #28a745;
+    background-image: url('../../assets/icons/footstep.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    border: 1px solid white;
+    border-radius: 50%;
+
+    height: 50px;
+    width: 50px;
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { InfoWindow, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 import './PlaceComponent.scss';
@@ -59,11 +59,11 @@ export default function PlaceComponent(prop) {
     const request = {
       placeId: prop.placeId,
       fields: [
-        "name",
-        "place_id",
-        "geometry",
-        "photo",
-        "types"
+        'name',
+        'place_id',
+        'geometry',
+        'photo',
+        'types'
       ],
     };
 
@@ -82,23 +82,28 @@ export default function PlaceComponent(prop) {
             lat: place?.geometry?.location?.lat(),
             lng: place?.geometry?.location?.lng(),
           }}
-          style={{ maxWidth: '350px', zIndex: -100 }}
+          style={{
+            maxWidth: '350px',
+          }}
           onCloseClick={() => setInfoWindow(null)}
           pixelOffset={[0, -50]}
         >
-          <div className="place">
+          <div className='place'>
             <img
-              className="place__image"
-              src={place?.photos ? place?.photos[0].getUrl() : 'https://placehold.co/200'}
+              className='place__image'
+              src={
+                place?.photos ?
+                  place?.photos[0].getUrl() :
+                  'https://placehold.co/300'
+              }
             />
-            <div className="place__options-container">
-              <button onClick={moveClickHandler({
+            <button
+              className='place__option'
+              onClick={moveClickHandler({
                 lat: latitude,
                 lng: longitude
               })}>
-                Move here
-              </button>
-            </div>
+            </button>
           </div>
         </InfoWindow>
       );
