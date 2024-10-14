@@ -5,8 +5,8 @@ import PlaceComponent from '../place/PlaceComponent';
 
 import './MapComponent.scss';
 
-export default function MapComponent() {
-  const [position, setPosition] = useState({ lat: null, lng: null });
+export default function MapComponent({ player, setProfile }) {
+  const [position, setPosition] = useState(player.getLocation());
   const [coordinates, setCoordinates] = useState(null);
   const [characterState, setCharacterState] = useState('idle');
   const [placeId, setPlaceId] = useState();
@@ -22,66 +22,44 @@ export default function MapComponent() {
     }
   }
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          setPosition({
-            //Waikiki
-            lat: 21.280693,
-            lng: -157.834549
-          });
-        }
-      );
-    }
-  }, []);
-
   const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   return (
     <section className='map'>
-      {position.lat && position.lng ? (
-        <APIProvider apiKey={googleMapsApiKey}>
-          <Map
-            mapId='d139bd7ef26a4ea3'
-            style={{ width: '100svw', height: '100svh' }}
-            defaultCenter={position}
-            defaultZoom={17}
-            disableDefaultUI={true}
-            disableDoubleClickZoom={true}
-            scrollwheel={false}
-            keyboardShortcuts={false}
-            onClick={clickHandler}
-          >
-            {
-              (!!placeId) ?
-                <PlaceComponent
-                  placeId={placeId}
-                  setCharacterState={setCharacterState}
-                  setCoordinates={setCoordinates}
-                  position={position} /> :
-                null
-            }
-            {
-              <MarkerComponent
-                location={position}
+      <APIProvider apiKey={googleMapsApiKey}>
+        <Map
+          mapId='d139bd7ef26a4ea3'
+          style={{ width: '100svw', height: '100svh' }}
+          defaultCenter={position}
+          defaultZoom={17}
+          disableDefaultUI={true}
+          disableDoubleClickZoom={true}
+          scrollwheel={false}
+          keyboardShortcuts={false}
+          onClick={clickHandler}
+          backgroundColor={'black'}
+        >
+          {
+            (!!placeId) ?
+              <PlaceComponent
+                placeId={placeId}
                 characterState={characterState}
                 setCharacterState={setCharacterState}
-                coordinates={coordinates}
-                setPosition={setPosition}
-                setPlaceId={setPlaceId} />
-            }
-          </Map>
-        </APIProvider>
-      ) : (
-        <p>Please enable geolocation to continue...</p>
-      )}
+                setCoordinates={setCoordinates}
+                position={position} /> :
+              null
+          }
+          {
+            <MarkerComponent
+              location={position}
+              characterState={characterState}
+              setCharacterState={setCharacterState}
+              coordinates={coordinates}
+              setPosition={setPosition}
+              setPlaceId={setPlaceId} />
+          }
+        </Map>
+      </APIProvider>
     </section>
   );
 }

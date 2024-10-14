@@ -11,6 +11,10 @@ export default function PlaceComponent(prop) {
 
   function moveClickHandler(destination) {
     return function (event) {
+      if (prop.characterState != 'idle') {
+        return;
+      }
+
       prop.setCharacterState('walk');
 
       const service = new routesLib.DirectionsService();
@@ -88,14 +92,12 @@ export default function PlaceComponent(prop) {
               src={place?.photos ? place?.photos[0].getUrl() : 'https://placehold.co/200'}
             />
             <div className="place__options-container">
-              <h4>Options</h4>
               <button onClick={moveClickHandler({
                 lat: latitude,
                 lng: longitude
               })}>
                 Move here
               </button>
-              <button>Quests</button>
             </div>
           </div>
         </InfoWindow>
