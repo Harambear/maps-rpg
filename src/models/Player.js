@@ -18,13 +18,13 @@ export default class Player {
 
 Player.prototype.getName = function () { return this.name; };
 Player.prototype.getHealth = function () { return this.health; };
-Player.prototype.setHealth = (change) => { return this.health += change; };
+Player.prototype.setHealth = function (value) { this.health = value; };
 Player.prototype.getFood = function () { return this.food; };
-Player.prototype.setFood = (change) => { return this.food += change; };
+Player.prototype.setFood = function (value) { this.food = value; };
 Player.prototype.getWater = function () { return this.water; };
-Player.prototype.setWater = (change) => { return this.water += change; };
+Player.prototype.setWater = function (value) { this.water = value; };
 Player.prototype.getLocation = function () { return this.location; };
-Player.prototype.setLocation = (change) => { return this.location += change; };
+Player.prototype.setLocation = function (location) { this.location = location; };
 Player.prototype.isValid = function () {
   return (
     this.health &&
