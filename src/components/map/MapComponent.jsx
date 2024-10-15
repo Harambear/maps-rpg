@@ -11,6 +11,11 @@ export default function MapComponent({ player, setProfile }) {
   const [characterState, setCharacterState] = useState('idle');
   const [placeId, setPlaceId] = useState();
 
+  useEffect(() => {
+    player.setLocation(position);
+    localStorage.setItem('profile', JSON.stringify(player));
+  }, [position])
+
   function clickHandler(event) {
     event.stop();
 
