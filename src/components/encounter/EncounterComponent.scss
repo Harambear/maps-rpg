@@ -1,0 +1,51 @@
+@import url('../../styles/animations.scss');
+
+.encounter {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translate(0, -50%);
+
+  background-color: black;
+  border: 1px solid white;
+
+  color: white;
+
+  animation: 0.5s slide-left;
+
+  &__title {
+    margin: 20px;
+  }
+
+  &__text {
+    margin: 20px;
+  }
+
+  &__option {
+    &-container {
+      margin: 20px;
+    }
+
+    cursor: pointer;
+
+    background-color: transparent;
+
+    border: none;
+
+    font-size: 20px;
+    line-height: 1.2;
+
+    height: 30px;
+    width: 30px;
+
+    &--accept {
+      color: #28a745;
+    }
+
+    &--decline {
+      border: none;
+
+      color: #a81d1d;
+    }
+  }
+}
