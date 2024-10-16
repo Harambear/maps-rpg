@@ -5,6 +5,7 @@ export default class Player {
   water;
   status;
   location;
+  coins;
 
   constructor(options) {
     this.name = options.name;
@@ -13,16 +14,19 @@ export default class Player {
     this.food = options.food || 100;
     this.water = options.water || 100;
     this.status = options.status || statuses.alive;
+    this.coins = options.coins || 0;
   };
 }
 
+Player.prototype.getCoins = function () { return this.coins; };
+Player.prototype.adjustCoins = function (change) { return this.coins += change; };
 Player.prototype.getName = function () { return this.name; };
 Player.prototype.getHealth = function () { return this.health; };
-Player.prototype.setHealth = function (value) { this.health = value; };
+Player.prototype.adjustHealth = function (change) { this.health += change; };
 Player.prototype.getFood = function () { return this.food; };
-Player.prototype.setFood = function (value) { this.food = value; };
+Player.prototype.adjustFood = function (change) { this.food += change; };
 Player.prototype.getWater = function () { return this.water; };
-Player.prototype.setWater = function (value) { this.water = value; };
+Player.prototype.adjustWater = function (change) { this.water += change; };
 Player.prototype.getLocation = function () { return this.location; };
 Player.prototype.setLocation = function (location) { this.location = location; };
 Player.prototype.isValid = function () {
