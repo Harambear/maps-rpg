@@ -23,6 +23,7 @@ export default function MarkerComponent(prop) {
         prop.setPosition(marker.position);
         prop.setPlaceId(null);
         prop.setCharacterState('idle');
+        prop.setOpenPanorama('true');
       }
 
       moveMarker(marker);
