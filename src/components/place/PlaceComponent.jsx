@@ -110,7 +110,7 @@ export default function PlaceComponent(prop) {
 
       setInfoWindow(window);
     })
-  }, [prop.placeId, placesLib, map]);
+  }, [prop.placeId, placesLib]);
 
   return (
     <>
