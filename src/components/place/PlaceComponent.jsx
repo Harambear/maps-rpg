@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { InfoWindow, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 import './PlaceComponent.scss';
 
-export default function PlaceComponent(prop) {
+export default function PlaceComponent({
+  placeId,
+  characterState,
+  setCharacterState,
+  setCoordinates,
+  position
+}) {
   const map = useMap();
   const placesLib = useMapsLibrary('places');
   const routesLib = useMapsLibrary('routes');
@@ -11,11 +17,15 @@ export default function PlaceComponent(prop) {
 
   function moveClickHandler(destination) {
     return function (event) {
-      prop.setCharacterState('walk');
+      if (characterState != 'idle') {
+        return;
+      }
+
+      setCharacterState('walk');
 
       const service = new routesLib.DirectionsService();
       const request = {
-        origin: prop.position,
+        origin: position,
         destination: destination,
         travelMode: 'WALKING'
       };
@@ -36,12 +46,12 @@ export default function PlaceComponent(prop) {
             steps[count] = {};
             steps[count]['lat'] = path.lat();
             steps[count]['lng'] = path.lng();
-
+            steps[count]['expenditure'] = -(step.distance.value / 50) / step.path.length;
             count++;
           });
         }
 
-        prop.setCoordinates(steps);
+        setCoordinates(steps);
       });
     }
   }
@@ -53,13 +63,13 @@ export default function PlaceComponent(prop) {
 
     const service = new placesLib.PlacesService(map);
     const request = {
-      placeId: prop.placeId,
+      placeId: placeId,
       fields: [
-        "name",
-        "place_id",
-        "geometry",
-        "photo",
-        "types"
+        'name',
+        'place_id',
+        'geometry',
+        'photo',
+        'types'
       ],
     };
 
@@ -78,32 +88,35 @@ export default function PlaceComponent(prop) {
             lat: place?.geometry?.location?.lat(),
             lng: place?.geometry?.location?.lng(),
           }}
-          style={{ maxWidth: '350px', zIndex: -100 }}
+          style={{
+            maxWidth: '350px',
+          }}
           onCloseClick={() => setInfoWindow(null)}
           pixelOffset={[0, -50]}
         >
-          <div className="place">
+          <div className='place'>
             <img
-              className="place__image"
-              src={place?.photos ? place?.photos[0].getUrl() : 'https://placehold.co/200'}
+              className='place__image'
+              src={
+                place?.photos ?
+                  place?.photos[0].getUrl() :
+                  'https://placehold.co/300'
+              }
             />
-            <div className="place__options-container">
-              <h4>Options</h4>
-              <button onClick={moveClickHandler({
+            <button
+              className='place__option'
+              onClick={moveClickHandler({
                 lat: latitude,
                 lng: longitude
               })}>
-                Move here
-              </button>
-              <button>Quests</button>
-            </div>
+            </button>
           </div>
         </InfoWindow>
       );
 
       setInfoWindow(window);
     })
-  }, [prop.placeId, placesLib, map]);
+  }, [placeId, placesLib]);
 
   return (
     <>
