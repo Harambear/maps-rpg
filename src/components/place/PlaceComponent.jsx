@@ -46,7 +46,7 @@ export default function PlaceComponent({
             steps[count] = {};
             steps[count]['lat'] = path.lat();
             steps[count]['lng'] = path.lng();
-            steps[count]['expenditure'] = -(step.distance.value / 10) / step.path.length;
+            steps[count]['expenditure'] = -(step.distance.value / 50) / step.path.length;
             count++;
           });
         }

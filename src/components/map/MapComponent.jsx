@@ -47,7 +47,10 @@ export default function MapComponent({ player, setProfile }) {
     }
 
     // give reward
-    player.adjustCoins(10);
+    player.adjustCoins(100);
+    player.adjustHealth(5);
+    player.adjustFood(5);
+    player.adjustWater(5);
 
     // need to create a new reference for the state change to trigger...
     const playerClone = new Player(player);
