@@ -14,14 +14,19 @@ export default function EncounterComponent({
   const panorama = map.getStreetView();
 
   useEffect(() => {
+    setClose(false);
     setPanorama(panorama);
-  }, [])
+  }, [position])
 
   panorama.setOptions({
     linksControl: false,
-    panControl: false,
-    enableCloseButton: false
-  })
+    panControl: true,
+    enableCloseButton: false,
+    scrollwheel: false,
+    disableDefaultUI: true,
+    clickToGo: false
+  });
+
   panorama.setPosition(position);
 
   function startQuest(event) {
@@ -36,11 +41,11 @@ export default function EncounterComponent({
     (characterState === 'idle' && !close) ?
       <section className="encounter">
         <div className="encounter__title">
-          Retrieve lost balloons
+          Find the balloon!
         </div>
 
         <div className="encounter__text">
-          Help me get all of my lost balloons!
+          I've hidden a balloon in the area! Find it and you'll earn some coins!
         </div>
 
         <div className="encounter__option-container">
