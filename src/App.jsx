@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { APIProvider } from '@vis.gl/react-google-maps';
 import MapComponent from './components/map/MapComponent'
 import { locations } from './data/locations';
+import HudComponent from './components/hud/HudComponent';
 import Player from './models/Player';
 
 import './App.scss'
@@ -12,6 +14,16 @@ export default function App() {
   const [inputClass, setInputClass] = useState('menu__option__input menu__option__input--text');
 
   const nameRef = useRef(null);
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  useEffect(() => {
+    if (profile) {
+      console.log(profile.isValid());
+      // do something if character dies
+
+    }
+
+  }, [profile]);
 
   useEffect(() => {
     if ('geolocation' in navigator) {
@@ -93,10 +105,15 @@ export default function App() {
               }
             </div>
           </div> :
-          <MapComponent
-            player={profile}
-            setProfile={setProfile}
-          />
+          <APIProvider apiKey={googleMapsApiKey}>
+            <HudComponent
+              player={profile}
+            />
+            <MapComponent
+              player={profile}
+              setProfile={setProfile}
+            />
+          </APIProvider>
       }
     </section >
   )
