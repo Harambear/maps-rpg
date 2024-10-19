@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+import { Map, Marker } from '@vis.gl/react-google-maps';
 import EncounterComponent from '../encounter/EncounterComponent';
 import MarkerComponent from '../marker/MarkerComponent';
 import PlaceComponent from '../place/PlaceComponent';
+import Player from '../../models/Player';
+
 import balloons from '../../assets/icons/balloons.png';
 import './MapComponent.scss';
 
@@ -15,6 +17,7 @@ export default function MapComponent({ player, setProfile }) {
   const [placeId, setPlaceId] = useState(null);
   const [position, setPosition] = useState(player.getLocation());
 
+  // save player on move
   useEffect(() => {
     player.setLocation(position);
     localStorage.setItem('profile', JSON.stringify(player));
@@ -41,80 +44,80 @@ export default function MapComponent({ player, setProfile }) {
     if (!filteredObjectives.length) {
       // turn off panorama
       panorama.setVisible(false);
-
-      // show text?
     }
 
     // give reward
     player.adjustCoins(10);
-    console.log(player);
+
+    // need to create a new reference for the state change to trigger...
+    const playerClone = new Player(player);
+    setProfile(playerClone);
+
     return setEncounterObjectives(filteredObjectives);
   }
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
   return (
     <section className='map'>
-      <APIProvider apiKey={googleMapsApiKey}>
-        <Map
-          mapId='d139bd7ef26a4ea3'
-          style={{ width: '100svw', height: '100svh' }}
-          defaultCenter={position}
-          defaultZoom={17}
-          disableDefaultUI={true}
-          disableDoubleClickZoom={true}
-          scrollwheel={false}
-          keyboardShortcuts={false}
-          onClick={mapClickHandler}
-          backgroundColor={'black'}
-        >
-          {
-            encounterObjectives.length ?
-              encounterObjectives.map((objective, index) => {
-                return (
-                  <Marker
-                    key={index}
-                    className='encounter__objective'
-                    position={objective}
-                    icon={balloons}
-                    onClick={objectiveClickHandler}
-                  />
-                )
-              }) :
-              null
-          }
-          {
-            (!!openPanorama) ?
-              <EncounterComponent
-                position={position}
-                characterState={characterState}
-                setOpenPanorama={setOpenPanorama}
-                setEncounterObjectives={setEncounterObjectives}
-                setPanorama={setPanorama} /> :
-              null
-          }
-          {
-            (!!placeId) ?
-              <PlaceComponent
-                placeId={placeId}
-                characterState={characterState}
-                setCharacterState={setCharacterState}
-                setCoordinates={setCoordinates}
-                position={position} /> :
-              null
-          }
-          {
-            <MarkerComponent
-              location={position}
+      <Map
+        mapId='d139bd7ef26a4ea3'
+        style={{ width: '100svw', height: '100svh' }}
+        defaultCenter={position}
+        defaultZoom={17}
+        disableDefaultUI={true}
+        disableDoubleClickZoom={true}
+        scrollwheel={false}
+        keyboardShortcuts={false}
+        onClick={mapClickHandler}
+        backgroundColor={'black'}
+      >
+        {
+          encounterObjectives.length ?
+            encounterObjectives.map((objective, index) => {
+              return (
+                <Marker
+                  key={index}
+                  className='encounter__objective'
+                  position={objective}
+                  icon={balloons}
+                  onClick={objectiveClickHandler}
+                />
+              )
+            }) :
+            null
+        }
+        {
+          (!!openPanorama) ?
+            <EncounterComponent
+              position={position}
+              characterState={characterState}
+              setOpenPanorama={setOpenPanorama}
+              setEncounterObjectives={setEncounterObjectives}
+              setPanorama={setPanorama} /> :
+            null
+        }
+        {
+          (!!placeId) ?
+            <PlaceComponent
+              placeId={placeId}
               characterState={characterState}
               setCharacterState={setCharacterState}
-              coordinates={coordinates}
-              setPosition={setPosition}
-              setPlaceId={setPlaceId}
-              setOpenPanorama={setOpenPanorama} />
-          }
-        </Map>
-      </APIProvider>
+              setCoordinates={setCoordinates}
+              position={position} /> :
+            null
+        }
+        {
+          <MarkerComponent
+            player={player}
+            setProfile={setProfile}
+            location={position}
+            characterState={characterState}
+            setCharacterState={setCharacterState}
+            coordinates={coordinates}
+            setPosition={setPosition}
+            setPlaceId={setPlaceId}
+            setOpenPanorama={setOpenPanorama} />
+        }
+      </Map>
     </section>
   );
 }
