@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AdvancedMarker, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
+import Player from '../../models/Player';
 import attack from '../../assets/spritesheet/cat/attack.png';
 import death from '../../assets/spritesheet/cat/death.png';
 import hurt from '../../assets/spritesheet/cat/hurt.png';
@@ -7,37 +8,53 @@ import idle from '../../assets/spritesheet/cat/idle.png';
 import walk from '../../assets/spritesheet/cat/walk.png';
 import './MarkerComponent.scss';
 
-export default function MarkerComponent(prop) {
+export default function MarkerComponent({
+  player,
+  setProfile,
+  location,
+  characterState,
+  coordinates,
+  setPosition,
+  setPlaceId,
+  setOpenPanorama,
+  setCharacterState
+}) {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   useEffect(() => {
-    if (prop.coordinates) {
+    if (coordinates) {
       async function moveMarker(marker) {
-        for (let i = 0; i < prop.coordinates.length; i++) {
-          const coordinate = prop.coordinates[i];
+        for (let i = 0; i < coordinates.length; i++) {
+          const coordinate = coordinates[i];
           marker.position = coordinate;
+
+          player.adjustFood(coordinate.expenditure);
+          player.adjustWater(coordinate.expenditure);
+          const playerClone = new Player(player);
+          setProfile(playerClone);
+
           await sleep(200);
         }
 
-        prop.setPosition(marker.position);
-        prop.setPlaceId(null);
-        prop.setCharacterState('idle');
-        prop.setOpenPanorama('true');
+        setPosition(marker.position);
+        setPlaceId(null);
+        setCharacterState('idle');
+        setOpenPanorama('true');
       }
 
       moveMarker(marker);
     }
-  }, [prop.coordinates]);
+  }, [coordinates]);
 
   return (
     <AdvancedMarker
       ref={markerRef}
-      position={prop.location}
+      position={location}
       title={'Character Marker'}
     >
       <div className="character">
-        {renderCharacter(prop.characterState)}
+        {renderCharacter(characterState)}
       </div>
     </AdvancedMarker>
   )
