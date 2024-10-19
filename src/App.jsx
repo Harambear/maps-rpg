@@ -9,6 +9,7 @@ import './App.scss'
 
 export default function App() {
   const [savedProfile, setSavedProfile] = useState(null);
+  const [message, setMessage] = useState(null);
   const [profile, setProfile] = useState(null);
   const [startingPosition, setStartingPosition] = useState(null);
   const [inputClass, setInputClass] = useState('menu__option__input menu__option__input--text');
@@ -18,7 +19,13 @@ export default function App() {
 
   useEffect(() => {
     if (profile) {
-      console.log(profile.isValid());
+      if (!profile.isValid()) {
+        console.log('died');
+        localStorage.removeItem('profile');
+        setSavedProfile(null);
+
+        setMessage('You died from exhaustion... Try again?')
+      }
       // do something if character dies
 
     }
@@ -64,7 +71,12 @@ export default function App() {
   return (
     <section className='app'>
       {
-        !profile ?
+        message ?
+          <div className='message'>{message}</div> :
+          null
+      }
+      {
+        !profile || !profile.isValid() ?
           <div className='menu'>
             {
               savedProfile ?
