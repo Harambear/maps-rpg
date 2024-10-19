@@ -1,3 +1,62 @@
-section.app {
+.app {
+  background-color: #000000;
+  background-image: url('./assets/backgrounds/cartographer.png');
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 100svh;
+  width: 100svw;
   position: relative;
+
+  .message {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 1;
+
+    color: white;
+  }
+
+  .menu {
+    border: 1px solid white;
+    color: white;
+    text-align: center;
+
+    &__option {
+      cursor: pointer;
+
+      border: 1px solid white;
+      padding: 10px;
+
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.75);
+        color: black;
+      }
+
+      &__input {
+        margin-bottom: 10px;
+        padding: 10px;
+
+        &--text {
+          height: 40px;
+
+          &--error {
+            box-shadow: 0 0 20px red;
+          }
+        }
+      }
+
+      &-container {
+        margin: 20px;
+
+        &__title {
+          margin: 10px 0;
+        }
+      }
+    }
+  }
 }

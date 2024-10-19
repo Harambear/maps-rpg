@@ -1,19 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { APIProvider, Map } from '@vis.gl/react-google-maps';
+import { Map, Marker } from '@vis.gl/react-google-maps';
+import EncounterComponent from '../encounter/EncounterComponent';
 import MarkerComponent from '../marker/MarkerComponent';
 import PlaceComponent from '../place/PlaceComponent';
+import Player from '../../models/Player';
 
+import balloons from '../../assets/icons/balloons.png';
 import './MapComponent.scss';
 
-export default function MapComponent() {
-  const [position, setPosition] = useState({ lat: null, lng: null });
-  const [coordinates, setCoordinates] = useState(null);
+export default function MapComponent({ player, setProfile }) {
   const [characterState, setCharacterState] = useState('idle');
-  const [placeId, setPlaceId] = useState();
+  const [encounterObjectives, setEncounterObjectives] = useState([]);
+  const [coordinates, setCoordinates] = useState(null);
+  const [openPanorama, setOpenPanorama] = useState(null);
+  const [panorama, setPanorama] = useState(null);
+  const [placeId, setPlaceId] = useState(null);
+  const [position, setPosition] = useState(player.getLocation());
 
-  function clickHandler(event) {
-    event.stop();
+  // save player on move
+  useEffect(() => {
+    player.setLocation(position);
+    localStorage.setItem('profile', JSON.stringify(player));
+  }, [position])
 
+  function mapClickHandler(event) {
     const placeId = event.detail.placeId;
 
     if (placeId) {
@@ -22,66 +32,95 @@ export default function MapComponent() {
     }
   }
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setPosition({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          setPosition({
-            //Waikiki
-            lat: 21.280693,
-            lng: -157.834549
-          });
-        }
-      );
-    }
-  }, []);
+  function objectiveClickHandler(event) {
+    const filteredObjectives = encounterObjectives.filter((objective) => {
+      return (
+        objective.lat !== this.position.lat() ||
+        objective.lng !== this.position.lng()
+      )
+    });
 
-  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    // if no objectives are left
+    if (!filteredObjectives.length) {
+      // turn off panorama
+      panorama.setVisible(false);
+    }
+
+    // give reward
+    player.adjustCoins(100);
+    player.adjustHealth(5);
+    player.adjustFood(5);
+    player.adjustWater(5);
+
+    // need to create a new reference for the state change to trigger...
+    const playerClone = new Player(player);
+    setProfile(playerClone);
+
+    return setEncounterObjectives(filteredObjectives);
+  }
 
   return (
     <section className='map'>
-      {position.lat && position.lng ? (
-        <APIProvider apiKey={googleMapsApiKey}>
-          <Map
-            mapId='d139bd7ef26a4ea3'
-            style={{ width: '100svw', height: '100svh' }}
-            defaultCenter={position}
-            defaultZoom={17}
-            disableDefaultUI={true}
-            disableDoubleClickZoom={true}
-            scrollwheel={false}
-            keyboardShortcuts={false}
-            onClick={clickHandler}
-          >
-            {
-              (!!placeId) ?
-                <PlaceComponent
-                  placeId={placeId}
-                  setCharacterState={setCharacterState}
-                  setCoordinates={setCoordinates}
-                  position={position} /> :
-                null
-            }
-            {
-              <MarkerComponent
-                location={position}
-                characterState={characterState}
-                setCharacterState={setCharacterState}
-                coordinates={coordinates}
-                setPosition={setPosition}
-                setPlaceId={setPlaceId} />
-            }
-          </Map>
-        </APIProvider>
-      ) : (
-        <p>Please enable geolocation to continue...</p>
-      )}
+      <Map
+        mapId='d139bd7ef26a4ea3'
+        style={{ width: '100svw', height: '100svh' }}
+        defaultCenter={position}
+        defaultZoom={17}
+        disableDefaultUI={true}
+        disableDoubleClickZoom={true}
+        scrollwheel={false}
+        keyboardShortcuts={false}
+        onClick={mapClickHandler}
+        backgroundColor={'black'}
+      >
+        {
+          encounterObjectives.length ?
+            encounterObjectives.map((objective, index) => {
+              return (
+                <Marker
+                  key={index}
+                  className='encounter__objective'
+                  position={objective}
+                  icon={balloons}
+                  onClick={objectiveClickHandler}
+                />
+              )
+            }) :
+            null
+        }
+        {
+          (!!openPanorama) ?
+            <EncounterComponent
+              position={position}
+              characterState={characterState}
+              setOpenPanorama={setOpenPanorama}
+              setEncounterObjectives={setEncounterObjectives}
+              setPanorama={setPanorama} /> :
+            null
+        }
+        {
+          (!!placeId) ?
+            <PlaceComponent
+              placeId={placeId}
+              characterState={characterState}
+              setCharacterState={setCharacterState}
+              setCoordinates={setCoordinates}
+              position={position} /> :
+            null
+        }
+        {
+          <MarkerComponent
+            player={player}
+            setProfile={setProfile}
+            location={position}
+            characterState={characterState}
+            setCharacterState={setCharacterState}
+            coordinates={coordinates}
+            setPosition={setPosition}
+            setPlaceId={setPlaceId}
+            setOpenPanorama={setOpenPanorama} />
+        }
+      </Map>
     </section>
   );
 }
