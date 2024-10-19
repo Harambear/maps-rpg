@@ -3,7 +3,13 @@ import { InfoWindow, useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 
 import './PlaceComponent.scss';
 
-export default function PlaceComponent(prop) {
+export default function PlaceComponent({
+  placeId,
+  characterState,
+  setCharacterState,
+  setCoordinates,
+  position
+}) {
   const map = useMap();
   const placesLib = useMapsLibrary('places');
   const routesLib = useMapsLibrary('routes');
@@ -11,15 +17,15 @@ export default function PlaceComponent(prop) {
 
   function moveClickHandler(destination) {
     return function (event) {
-      if (prop.characterState != 'idle') {
+      if (characterState != 'idle') {
         return;
       }
 
-      prop.setCharacterState('walk');
+      setCharacterState('walk');
 
       const service = new routesLib.DirectionsService();
       const request = {
-        origin: prop.position,
+        origin: position,
         destination: destination,
         travelMode: 'WALKING'
       };
@@ -40,12 +46,12 @@ export default function PlaceComponent(prop) {
             steps[count] = {};
             steps[count]['lat'] = path.lat();
             steps[count]['lng'] = path.lng();
-
+            steps[count]['expenditure'] = -(step.distance.value / 10) / step.path.length;
             count++;
           });
         }
 
-        prop.setCoordinates(steps);
+        setCoordinates(steps);
       });
     }
   }
@@ -57,7 +63,7 @@ export default function PlaceComponent(prop) {
 
     const service = new placesLib.PlacesService(map);
     const request = {
-      placeId: prop.placeId,
+      placeId: placeId,
       fields: [
         'name',
         'place_id',
@@ -110,7 +116,7 @@ export default function PlaceComponent(prop) {
 
       setInfoWindow(window);
     })
-  }, [prop.placeId, placesLib]);
+  }, [placeId, placesLib]);
 
   return (
     <>
