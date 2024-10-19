@@ -24,9 +24,7 @@
   }
 
   &__option {
-    &-container {
-      margin: 20px;
-    }
+
 
     cursor: pointer;
 
@@ -39,6 +37,10 @@
 
     height: 30px;
     width: 30px;
+
+    &-container {
+      margin: 20px;
+    }
 
     &--accept {
       color: #28a745;
