@@ -20,16 +20,14 @@ export default function App() {
   useEffect(() => {
     if (profile) {
       if (!profile.isValid()) {
-        console.log('died');
         localStorage.removeItem('profile');
         setSavedProfile(null);
 
         setMessage('You died from exhaustion... Try again?')
+      } else {
+        setMessage(null);
       }
-      // do something if character dies
-
     }
-
   }, [profile]);
 
   useEffect(() => {
